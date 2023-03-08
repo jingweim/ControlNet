@@ -1309,11 +1309,16 @@ class LatentDiffusion(DDPM):
         return x
 
 
+
 class DiffusionWrapper(pl.LightningModule):
     def __init__(self, diff_model_config, conditioning_key):
         super().__init__()
         self.sequential_cross_attn = diff_model_config.pop("sequential_crossattn", False)
         self.diffusion_model = instantiate_from_config(diff_model_config)
+        # disable training for encoding blocks
+        for name, param in self.diffusion_model.named_parameters():
+            if name.startswith('time_embed') or name.startswith('input_blocks'):
+                param.requires_grad = False
         self.conditioning_key = conditioning_key
         assert self.conditioning_key in [None, 'concat', 'crossattn', 'hybrid', 'adm', 'hybrid-adm', 'crossattn-adm']
 

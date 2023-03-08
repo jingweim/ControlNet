@@ -433,3 +433,37 @@ class ControlLDM(LatentDiffusion):
             self.control_model = self.control_model.cpu()
             self.first_stage_model = self.first_stage_model.cuda()
             self.cond_stage_model = self.cond_stage_model.cuda()
+
+    def on_save_checkpoint(self, checkpoint):
+        '''
+            Inside checkpoint['state_dict']:
+
+                Frozen:
+                - model.diffusion_model: 859.5M
+                - first_stage_model: encode/decode to/from latent space, 83.7M
+                - cond_stage_model: text-conditioning, 123.1M
+
+                Trainable:
+                - control_model: control net params, 361.3M, 340 layer weight or bias
+
+                Count # params -> sum(p.numel() for p in model.parameters())
+                [comment] the 1.2B was from model.diffusion_model+control_model
+                [comment] after removing the whole state_dict there was still 2.9G, 
+                        around two times model parameters which is 1.4G
+                [comment] each ckpt 8.6G -> 4.3G
+
+            Inside checkpoint['optimizer_states'][0]:
+                'state': keys from 0 to 339, maintaining a state for each layer weight or bias 
+                        each entry has ['step', 'exp_avg', 'exp_avg_sq'], (1,),(1280,320),(1280,320)
+                'param_groups': ['lr', 'betas', 'eps', 'weight_decay', 'amsgrad', 'foreach', 'maximize', 'capturable', 'params']
+
+            Autograd things:
+                (Pdb) ctx.input_tensors[0].shape # 64x64, 320
+                torch.Size([10, 4096, 320])
+                (Pdb) ctx.input_tensors[1].shape # text embedding
+                torch.Size([10, 77, 768])
+        '''
+        keys_delete = [k for k in checkpoint['state_dict'].keys() if not k.startswith('control_model')]
+        for k in keys_delete:
+            del checkpoint['state_dict'][k]
+
