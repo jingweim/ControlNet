@@ -1,6 +1,7 @@
 import os
 import pytorch_lightning as pl
 from pytorch_lightning.callbacks import ModelCheckpoint
+from pytorch_lightning import seed_everything
 from torch.utils.data import DataLoader
 
 from share import *
@@ -20,6 +21,12 @@ def config_parser():
         type=str,
         required=True,
         help="name of experiment, e.g. fill_run0, tgbh_run1",
+    )
+    parser.add_argument(
+        "--seed",
+        type=int,
+        default=0,
+        help="set seed for reproducing experiments",
     )
     parser.add_argument(
         "--resume_path",
@@ -87,8 +94,9 @@ def config_parser():
     return args
 
 
-# load configs 
+# load configs and set seed
 args = config_parser()
+seed_everything(args.seed)
 
 
 # First use cpu to load models. Pytorch Lightning will automatically move it to GPUs.

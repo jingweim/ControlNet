@@ -316,6 +316,11 @@ class ControlLDM(LatentDiffusion):
 
     @torch.no_grad()
     def get_input(self, batch, k, bs=None, *args, **kwargs):
+        '''
+            c.shape: torch.Size([10, 77, 768])
+            x.shape: torch.Size([10, 4, 64, 64])
+            control.shape: torch.Size([10, 512, 512, 3])
+        '''
         x, c = super().get_input(batch, self.first_stage_key, *args, **kwargs)
         control = batch[self.control_key]
         if bs is not None:
