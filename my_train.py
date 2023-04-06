@@ -54,6 +54,12 @@ def config_parser():
             if this number bigger than data_size/batch_size, save at the end of epoch",
     )
     parser.add_argument(
+        "--save_ckpt_starting_epoch",
+        type=int,
+        default=0,
+        help="start saving model checkpoint at this epoch",
+    )
+    parser.add_argument(
         "--learning_rate",
         type=float,
         default=1e-5,
@@ -105,6 +111,7 @@ model.load_state_dict(load_state_dict(args.resume_path, location='cpu'))
 model.learning_rate = args.learning_rate
 model.sd_locked = args.sd_locked
 model.only_mid_control = args.only_mid_control
+model.save_ckpt_starting_epoch = args.save_ckpt_starting_epoch
 
 
 # Misc

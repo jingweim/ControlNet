@@ -451,6 +451,17 @@ class DDPM(pl.LightningModule):
             lr = self.optimizers().param_groups[0]['lr']
             self.log('lr_abs', lr, prog_bar=True, logger=True, on_step=True, on_epoch=False)
 
+        # Remove saved checkpoints before a certain epoch
+        import os
+        ckpt_dir = os.path.join(self.logger.log_dir, 'checkpoints')
+        ckpt_fnames = os.listdir(ckpt_dir)
+        if len(ckpt_fnames):
+            for ckpt_fname in ckpt_fnames:
+                epoch = int(ckpt_fname.split('-')[0].split('=')[-1])
+                if epoch < self.save_ckpt_starting_epoch:
+                    os.remove(os.path.join(ckpt_dir, ckpt_fname))
+                    print(ckpt_fname, 'removed')
+
         return loss
 
     @torch.no_grad()
