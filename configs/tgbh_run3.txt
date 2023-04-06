@@ -1,0 +1,14 @@
+exp_name='tgbh_run3'
+
+# training
+batch_size=10
+num_workers=6
+logger_freq=50
+save_ckpt_starting_epoch = 100
+resume_path = '/gscratch/realitylab/jingweim/ControlNet/models/control_sd15_canny.pth'
+
+# dataset
+prompt_path = '/gscratch/realitylab/jingweim/diffusers/examples/dreambooth/data/tgbh.txt'
+src_dir = '/gscratch/realitylab/jingweim/ControlNet/input/tgbh/canny_100_200'
+tgt_dir = '/gscratch/realitylab/jingweim/diffusers/examples/dreambooth/data/tgbh/images'
+

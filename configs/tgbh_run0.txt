@@ -1,0 +1,11 @@
+exp_name='tgbh_run0'
+
+# training
+batch_size=4
+num_workers=0
+logger_freq=300
+
+# dataset
+prompt_path = '/gscratch/realitylab/jingweim/diffusers/examples/dreambooth/data/tgbh.txt'
+src_dir = '/gscratch/realitylab/jingweim/ControlNet/input/tgbh/canny_100_200'
+tgt_dir = '/gscratch/realitylab/jingweim/diffusers/examples/dreambooth/data/tgbh/images'

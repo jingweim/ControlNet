@@ -1,0 +1,11 @@
+exp_name='fill_run0'
+
+# training
+batch_size=10
+num_workers=6
+logger_freq=100
+
+# dataset
+src_dir = './input/fill50k/'
+tgt_dir = './input/fill50k/'
+prompt_path = './input/fill50k/prompt.json'
